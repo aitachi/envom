@@ -484,9 +484,9 @@ class ChatMonitor:
 def main():
     print("🤖 企业微信聊天监控服务启动")
     print("监控条件:")
-    print("- 审批监控: 发送者 ChuQi/llm-aitachi 发送 '同意'")
-    print("- 定价监控: 发送者 llm-aitachi/HeiHa 发送纯数字")
-    print("- 通知接收者: heiha, llm-aitachi")
+    print("- 审批监控: 发送者 Chu/llm-aitachi 发送 '同意'")
+    print("- 定价监控: 发送者 llm-aitachi/Hei 发送纯数字")
+    print("- 通知接收者: hei, llm-aitachi")
     print("- 内存条件检查: 每30秒检查一次价格询问、申请通知、解决通知")
     print("=" * 50)
 
