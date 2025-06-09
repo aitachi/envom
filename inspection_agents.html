@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能运维硬件巡检与监控系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #4facfe;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h2:before {
+            content: "🔧";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .flowchart {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+        
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .flow-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .flow-box.start {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .flow-box.process {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .flow-box.decision {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .flow-box.end {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+        
+        .flow-arrow {
+            font-size: 2em;
+            color: #4facfe;
+            margin: 0 10px;
+        }
+        
+        .flow-arrow-down {
+            font-size: 2em;
+            color: #4facfe;
+            transform: rotate(90deg);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(240, 147, 251, 0.4);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .architecture {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .arch-layer {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #4facfe;
+        }
+        
+        .arch-layer h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #fdcb6e;
+            margin: 15px 0;
+        }
+        
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .service-item {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(116, 185, 255, 0.3);
+        }
+        
+        .timeline {
+            position: relative;
+            margin: 30px 0;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+        
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            border: 2px solid #4facfe;
+        }
+        
+        .timeline-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .architecture {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline:before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                flex-direction: column !important;
+                align-items: flex-start;
+                padding-left: 70px;
+            }
+            
+            .timeline-icon {
+                left: 30px;
+            }
+            
+            .timeline-content {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 智能运维硬件巡检与监控系统</h1>
+            <p>基于AI大模型的自动化运维平台 | MCP协议 | 智能调度 | 实时监控</p>
+        </div>
+
+        <!-- 1. 功能介绍 -->
+        <div class="section">
+            <h2>🚀 系统功能介绍</h2>
+            
+            <div class="highlight">
+                <h3>📋 核心功能模块</h3>
+                <p>本系统是一个基于AI大模型驱动的智能运维平台，集成了硬件巡检、性能监控、日志分析、报告生成等十大核心服务。</p>
+            </div>
+
+            <div class="service-list">
+                <div class="service-item">
+                    <strong>服务001</strong><br>
+                    系统巡检<br>
+                    <small>数据库查询异常服务器</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务002</strong><br>
+                    内存巡检<br>
+                    <small>SSH连接详细检查</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务003</strong><br>
+                    硬盘巡检<br>
+                    <small>存储状态分析</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务004</strong><br>
+                    AI分析报告<br>
+                    <small>智能采购建议</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务005</strong><br>
+                    完整巡检<br>
+                    <small>端到端自动化流程</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务006</strong><br>
+                    日志分析<br>
+                    <small>智能错误检测</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务007</strong><br>
+                    日报生成<br>
+                    <small>每日监控报告</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务008</strong><br>
+                    周报生成<br>
+                    <small>趋势分析报告</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务009</strong><br>
+                    服务监控<br>
+                    <small>端口进程检查</small>
+                </div>
+                <div class="service-item">
+                    <strong>服务010</strong><br>
+                    平台监控<br>
+                    <small>性能指标采集</small>
+                </div>
+            </div>
+
+            <div class="flowchart">
+                <h3>📊 功能架构流程图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">用户请求输入</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">AI语义理解</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box decision">服务匹配</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">硬件巡检服务<br>(001-005)</div>
+                        <div class="flow-box process">基础监控服务<br>(006-010)</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">MCP协议调用</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">服务执行</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box end">结果返回</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 启动流程 -->
+        <div class="section">
+            <h2>🔄 系统启动流程</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">1</div>
+                    <div class="timeline-content">
+                        <h4>环境初始化</h4>
+                        <p>导入依赖模块、配置数据库连接、设置日志系统</p>
+                        <div class="code-block">python run_server.py</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">2</div>
+                    <div class="timeline-content">
+                        <h4>MCP服务器启动</h4>
+                        <p>注册10个服务处理器、启动异步服务器、监听8000端口</p>
+                        <div class="code-block">🚀 MCP服务器已启动，监听 0.0.0.0:8000</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">3</div>
+                    <div class="timeline-content">
+                        <h4>调度器启动</h4>
+                        <p>启动定时调度器、设置定时任务、开始倒计时循环</p>
+                        <div class="code-block">python chat_scheduler.py</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">4</div>
+                    <div class="timeline-content">
+                        <h4>聊天代理启动</h4>
+                        <p>启动AI驱动的聊天代理、准备语义理解、等待用户输入</p>
+                        <div class="code-block">python chat_agent.py</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flowchart">
+                <h3>🔧 启动流程图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">系统启动</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">加载配置文件</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">初始化数据库</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">设置日志系统</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">注册MCP服务</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">启动异步服务器</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box decision">启动模式选择</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">定时调度模式</div>
+                        <div class="flow-box process">交互聊天模式</div>
+                        <div class="flow-box process">API服务模式</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box end">系统就绪</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 大模型定时调度流程 -->
+        <div class="section">
+            <h2>⏰ 大模型定时调度流程</h2>
+            
+            <div class="highlight">
+                <h3>🤖 智能调度机制</h3>
+                <p>系统使用AI大模型进行智能任务调度，支持精确定时执行和动态决策调整。</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📅 定时任务配置</h3>
+                    <p>服务005: 10:15, 15:15<br>
+                    服务007: 10:10, 15:10<br>
+                    服务008: 周一08:00<br>
+                    服务009: 09:55, 14:55<br>
+                    服务010: 09:58, 14:58</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧠 AI决策引擎</h3>
+                    <p>使用Qwen3-32B大模型进行任务调度决策，根据当前状态智能选择下一步操作。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 倒计时监控</h3>
+                    <p>每10分钟输出任务倒计时状态，实时显示下次执行时间和任务排队情况。</p>
+                </div>
+            </div>
+
+            <div class="flowchart">
+                <h3>⏱️ 定时调度流程图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">调度器启动</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">设置定时任务</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">并发运行</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">定时任务检查<br>(每秒)</div>
+                        <div class="flow-box process">倒计时报告<br>(每10分钟)</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box decision">时间到达?</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">获取轮询请求</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">调用MCP服务</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">记录执行结果</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box end">等待下次执行</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+# 定时任务示例
+schedule.every().day.at("10:15").do(
+    lambda: asyncio.create_task(
+        self.execute_scheduled_task("service_005", "10:15")
+    )
+)
+
+# AI决策示例
+decision = await self.get_next_step_from_llm(
+    current_step, execution_results, available_services
+)
+            </div>
+        </div>
+
+        <!-- 4. Agent功能和调度流程 -->
+        <div class="section">
+            <h2>🤖 Agent功能和调度流程</h2>
+            
+            <div class="architecture">
+                <div class="arch-layer">
+                    <h4>🧠 LLM调度器</h4>
+                    <p>语义理解<br>意图识别<br>服务匹配</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>⚙️ 任务执行器</h4>
+                    <p>MCP协议调用<br>结果格式化<br>错误处理</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>💬 聊天代理</h4>
+                    <p>用户交互<br>流程控制<br>结果展示</p>
+                </div>
+            </div>
+
+            <div class="flowchart">
+                <h3>🔄 Agent调度流程图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">用户输入</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">聊天代理接收</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">LLM语义分析</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">生成执行计划</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box decision">置信度检查</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">任务执行器</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">MCP服务调用</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">结果收集</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">格式化输出</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box end">返回用户</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <h3>💡 Agent核心特性</h3>
+                <ul>
+                    <li><strong>智能语义理解</strong>: 使用Qwen3-32B模型进行自然语言理解</li>
+                    <li><strong>动态服务匹配</strong>: 根据用户意图智能选择合适的服务</li>
+                    <li><strong>置信度评估</strong>: 对语义理解结果进行可信度评估</li>
+                    <li><strong>错误恢复机制</strong>: 当AI解析失败时自动降级到默认服务</li>
+                    <li><strong>实时反馈</strong>: 提供详细的执行过程和结果反馈</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+# Agent核心调用逻辑
+async def process_user_input(self, user_input: str) -> str:
+    # 1. AI语义理解
+    plan = self.scheduler.parse_user_intent(user_input)
+    
+    # 2. 执行计划生成
+    execution_plan = plan.get('execution_plan', [])
+    
+    # 3. 任务执行
+    results = await self.executor.execute_plan(execution_plan)
+    
+    # 4. 结果格式化
+    return self.executor.format_results(results)
+            </div>
+        </div>
+
+        <!-- 5. 整体架构和运行流程 -->
+        <div class="section">
+            <h2>🏗️ 整体架构和运行流程</h2>
+            
+            <div class="flowchart">
+                <h3>🔧 系统架构图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">用户接口层</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">Chat Agent</div>
+                        <div class="flow-box process">定时调度器</div>
+                        <div class="flow-box process">Web API</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">AI语义理解层</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">MCP协议层</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">硬件巡检服务</div>
+                        <div class="flow-box process">监控服务</div>
+                        <div class="flow-box process">报告服务</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">数据库层</div>
+                        <div class="flow-box process">SSH连接层</div>
+                        <div class="flow-box process">监控API层</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔧 核心组件</h3>
+                    <p><strong>MCP服务器</strong>: 统一服务协议<br>
+                    <strong>AI调度器</strong>: 智能任务分配<br>
+                    <strong>数据采集器</strong>: 多源数据获取<br>
+                    <strong>报告生成器</strong>: AI智能分析</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 数据流向</h3>
+                    <p><strong>输入</strong>: 用户请求、定时触发<br>
+                    <strong>处理</strong>: AI分析、服务调用<br>
+                    <strong>存储</strong>: 数据库持久化<br>
+                    <strong>输出</strong>: 报告、告警、建议</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 技术栈</h3>
+                    <p><strong>后端</strong>: Python 3.8+, AsyncIO<br>
+                    <strong>AI模型</strong>: Qwen3-32B-AWQ<br>
+                    <strong>数据库</strong>: MySQL 8.0<br>
+                    <strong>协议</strong>: MCP、SSH、HTTP</p>
+                </div>
+            </div>
+
+            <div class="flowchart">
+                <h3>🔄 完整运行流程图</h3>
+                <div class="flow-container">
+                    <div class="flow-row">
+                        <div class="flow-box start">系统启动</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">服务注册</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">就绪状态</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box decision">触发方式</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">用户输入</div>
+                        <div class="flow-box process">定时触发</div>
+                        <div class="flow-box process">API调用</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">AI语义理解</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">服务选择</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">数据采集</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">状态分析</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box process">报告生成</div>
+                    </div>
+                    <div class="flow-arrow-down">↓</div>
+                    <div class="flow-row">
+                        <div class="flow-box process">数据存储</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box end">结果返回</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+# 核心文件结构
+├── config/
+│   └── config.py                 # 配置文件
+├── services/
+│   ├── system_inspection_service.py      # 服务001
+│   ├── memory_inspection_service.py      # 服务002
+│   ├── disk_inspection_service.py        # 服务003
+│   ├── hardware_summary_service.py       # 服务004
+│   ├── full_inspection.py               # 服务005
+│   └── base/
+│       ├── log_analysis_service.py       # 服务006
+│       ├── daily_report_service.py       # 服务007
+│       ├── weekly_report_service.py      # 服务008
+│       ├── server_monitoring_service.py  # 服务009
+│       └── platform_monitoring_service.py # 服务010
+├── utils/
+│   ├── logger.py               # 日志工具
+│   └── database.py             # 数据库工具
+├── run_server.py               # MCP服务器
+├── chat_agent.py               # AI聊天代理
+└── chat_scheduler.py           # 定时调度器
+            </div>
+
+            <div class="highlight">
+                <h3>🎯 系统优势</h3>
+                <ul>
+                    <li><strong>AI驱动</strong>: 基于大模型的智能理解和决策</li>
+                    <li><strong>模块化设计</strong>: 十大独立服务，可灵活组合</li>
+                    <li><strong>异步高性能</strong>: AsyncIO并发处理，支持大规模部署</li>
+                    <li><strong>标准化协议</strong>: MCP协议确保服务间通信一致性</li>
+                    <li><strong>智能调度</strong>: 定时任务和实时响应双模式</li>
+                    <li><strong>全面监控</strong>: 覆盖硬件、软件、性能、日志等各个维度</li>
+                    <li><strong>智能分析</strong>: AI生成详细的分析报告和优化建议</li>
+                    <li><strong>易于扩展</strong>: 开放式架构，便于添加新的监控服务</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 总结</h2>
+            <div class="highlight">
+                <p>本系统是一个基于AI大模型的智能运维平台，通过MCP协议实现了十大核心服务的统一管理。系统支持多种交互方式，包括自然语言聊天、定时自动执行和API调用。通过AI驱动的语义理解和智能调度，大大提升了运维工作的自动化程度和智能化水平。</p>
+                
+                <p><strong>核心价值</strong>：将传统的运维工作转变为智能化、自动化的运维体系，通过AI的决策能力和大规模数据分析能力，为企业提供更加精准、高效的运维服务。</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

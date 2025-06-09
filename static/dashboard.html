@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能运维监控系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .container {
+            width: 100%;
+            height: calc(100vh - 20px);
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            z-index: 1000;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .current-time {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        .workspace {
+            position: absolute;
+            top: 80px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 0 0 15px 15px;
+            overflow: hidden;
+        }
+
+        .draggable-panel {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e0e0e0;
+            min-width: 200px;
+            min-height: 150px;
+            cursor: move;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .draggable-panel:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .draggable-panel.dragging {
+            z-index: 1000;
+            transform: rotate(2deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px 8px 0 0;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .panel-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .panel-btn {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .panel-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            cursor: nw-resize;
+            background: linear-gradient(135deg, transparent 0%, transparent 30%, #ccc 30%, #ccc 100%);
+            border-radius: 0 0 8px 0;
+        }
+
+        .resize-handle:hover {
+            background: linear-gradient(135deg, transparent 0%, transparent 30%, #999 30%, #999 100%);
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .icon-countdown { background: #ff6b6b; }
+        .icon-chat { background: #4ecdc4; }
+        .icon-control { background: #96ceb4; }
+        .icon-report { background: #764ba2; }
+        .icon-services { background: #f39c12; }
+
+        .countdown-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .countdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-item:hover {
+            background: #e9ecef;
+            transform: translateX(2px);
+        }
+
+        .countdown-service {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.75em;
+        }
+
+        .countdown-time {
+            font-weight: 600;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+        }
+
+        .service-control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .service-status:hover {
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-status.running {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .service-status.stopped {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 0.7em;
+            color: #333;
+        }
+
+        .service-desc {
+            font-size: 0.6em;
+            color: #666;
+            margin-top: 1px;
+        }
+
+        .service-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .status-indicator.running {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.stopped {
+            background: #dc3545;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.65em;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .services-list {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            flex: 1;
+        }
+
+        .service-category {
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 0.75em;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 2px;
+        }
+
+        .service-item {
+            padding: 4px 6px;
+            margin-bottom: 2px;
+            background: white;
+            border-radius: 3px;
+            border-left: 3px solid #007bff;
+            font-size: 0.65em;
+            line-height: 1.2;
+            color: #495057;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .service-item:hover {
+            background: #e3f2fd;
+            transform: translateX(2px);
+        }
+
+        .service-code {
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            border: 1px solid #e9ecef;
+            scroll-behavior: smooth;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 4px;
+            font-size: 0.8em;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .message {
+            margin-bottom: 6px;
+            padding: 5px 8px;
+            border-radius: 4px;
+            max-width: 90%;
+            word-wrap: break-word;
+            animation: messageSlideIn 0.3s ease-out;
+            position: relative;
+            font-size: 0.75em;
+            line-height: 1.3;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+            border-radius: 12px 3px 12px 12px;
+        }
+
+        .message.assistant {
+            background: #e9ecef;
+            color: #333;
+            border-radius: 3px 12px 12px 12px;
+            border-left: 3px solid #4ecdc4;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-left: 3px solid #dc3545;
+            border-radius: 3px 12px 12px 12px;
+        }
+
+        .message.log {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-left: 3px solid #ffc107;
+            font-family: 'Courier New', monospace;
+            font-size: 0.65em;
+            border-radius: 3px;
+            max-width: 98%;
+        }
+
+        .timestamp {
+            font-size: 0.6em;
+            opacity: 0.7;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .ai-report-content {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            font-family: 'Segoe UI', sans-serif;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .ai-report-content h1 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .ai-report-content h2 {
+            color: #444;
+            border-left: 4px solid #667eea;
+            padding-left: 6px;
+            margin: 8px 0 6px 0;
+            font-size: 0.9em;
+        }
+
+        .ai-report-content h3 {
+            color: #555;
+            font-size: 0.8em;
+            margin: 6px 0 4px 0;
+        }
+
+        .ai-report-content ul, .ai-report-content ol {
+            margin-left: 15px;
+            margin-bottom: 6px;
+        }
+
+        .ai-report-content li {
+            margin-bottom: 3px;
+            font-size: 0.75em;
+        }
+
+        .ai-report-content p {
+            margin-bottom: 6px;
+            font-size: 0.75em;
+        }
+
+        .ai-report-content strong {
+            color: #333;
+        }
+
+        .ai-report-content code {
+            background: #f1f3f4;
+            padding: 2px 3px;
+            border-radius: 2px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+        }
+
+        .ai-report-content blockquote {
+            border-left: 4px solid #ddd;
+            margin: 6px 0;
+            padding-left: 8px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .ai-report-loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 30px 0;
+            font-size: 0.8em;
+        }
+
+        .ai-report-error {
+            text-align: center;
+            color: #dc3545;
+            padding: 30px 0;
+            font-size: 0.8em;
+        }
+
+        .ai-report-empty {
+            text-align: center;
+            color: #999;
+            padding: 30px 0;
+            font-style: italic;
+            font-size: 0.8em;
+        }
+
+        .ai-report-timestamp {
+            text-align: right;
+            font-size: 0.6em;
+            color: #999;
+            margin-top: 6px;
+            border-top: 1px solid #eee;
+            padding-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.6em;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .connection-status.connected {
+            background: rgba(212, 237, 218, 0.9);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .connection-status.disconnected {
+            background: rgba(248, 215, 218, 0.9);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .sync-indicator {
+            position: fixed;
+            top: 30px;
+            right: 10px;
+            padding: 3px 6px;
+            border-radius: 8px;
+            font-size: 0.55em;
+            font-weight: 500;
+            z-index: 1000;
+            background: rgba(227, 242, 253, 0.9);
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-bar {
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.5em;
+            font-weight: 500;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            color: #666;
+            border: 1px solid #ddd;
+            backdrop-filter: blur(10px);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 4px 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            max-width: 50px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dots span {
+            width: 3px;
+            height: 3px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .fullscreen-content {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .fullscreen-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-title {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .fullscreen-chat {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .fullscreen-messages {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+            scroll-behavior: smooth;
+        }
+
+        .fullscreen-input-container {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .fullscreen-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .fullscreen-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: messageSlideIn 0.3s ease-out;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .fullscreen-message.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+            border-radius: 18px 6px 18px 18px;
+        }
+
+        .fullscreen-message.assistant {
+            background: #e9ecef;
+            color: #333;
+            border-radius: 6px 18px 18px 18px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .fullscreen-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+            border-radius: 6px 18px 18px 18px;
+        }
+
+        .fullscreen-message.log {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #ffc107;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            border-radius: 6px;
+            max-width: 95%;
+        }
+
+        .expand-btn {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+            background: rgba(102, 126, 234, 0.8);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7em;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .expand-btn:hover {
+            background: rgba(102, 126, 234, 1);
+            transform: translateY(-1px);
+        }
+
+        .chat-container {
+            position: relative;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        @keyframes newMessage {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+                background-color: rgba(102, 126, 234, 0.1);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                background-color: transparent;
+            }
+        }
+
+        .message.new, .fullscreen-message.new {
+            animation: newMessage 0.5s ease-out;
+        }
+
+        .panel-minimized {
+            height: 40px !important;
+            min-height: 40px !important;
+        }
+
+        .panel-minimized .panel-content {
+            display: none;
+        }
+
+        .panel-minimized .resize-handle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .draggable-panel {
+                min-width: 250px;
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status disconnected" id="connectionStatus">
+        🔴 未连接
+    </div>
+
+    <div class="sync-indicator" id="syncIndicator">
+        🔄 实时同步
+    </div>
+
+    <div class="stats-bar" id="statsBar">
+        消息: 0 | 日志: 0
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤖 智能运维监控系统</h1>
+            <div class="current-time" id="currentTime"></div>
+        </div>
+
+        <div class="workspace" id="workspace">
+            <div class="draggable-panel" id="countdownPanel" style="left: 20px; top: 20px; width: 320px; height: 250px;">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="icon icon-countdown">⏰</div>
+                        定时任务倒计时
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn" onclick="minimizePanel('countdownPanel')">−</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="countdown-grid" id="countdownGrid">
+                    </div>
+                </div>
+                <div class="resize-handle"></div>
+            </div>
+
+            <div class="draggable-panel" id="servicePanel" style="left: 20px; top: 290px; width: 320px; height: 300px;">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="icon icon-control">🎛️</div>
+                        服务控制
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn" onclick="minimizePanel('servicePanel')">−</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="service-control">
+                        <div class="service-status stopped" id="mcpStatus">
+                            <div class="service-info">
+                                <div class="service-name">MCP服务器</div>
+                                <div class="service-desc">硬件巡检监控</div>
+                            </div>
+                            <div class="service-controls">
+                                <div class="status-indicator stopped" id="mcpIndicator"></div>
+                                <button class="btn btn-success" id="mcpBtn" onclick="toggleService('mcp')">启动</button>
+                            </div>
+                        </div>
+
+                        <div class="service-status stopped" id="chatStatus">
+                            <div class="service-info">
+                                <div class="service-name">Chat代理</div>
+                                <div class="service-desc">智能对话处理</div>
+                            </div>
+                            <div class="service-controls">
+                                <div class="status-indicator stopped" id="chatIndicator"></div>
+                                <button class="btn btn-success" id="chatBtn" onclick="toggleService('chat')">启动</button>
+                            </div>
+                        </div>
+
+                        <div class="service-status stopped" id="schedulerStatus">
+                            <div class="service-info">
+                                <div class="service-name">定时调度器</div>
+                                <div class="service-desc">自动化任务调度</div>
+                            </div>
+                            <div class="service-controls">
+                                <div class="status-indicator stopped" id="schedulerIndicator"></div>
+                                <button class="btn btn-success" id="schedulerBtn" onclick="toggleService('scheduler')">启动</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="resize-handle"></div>
+            </div>
+
+            <div class="draggable-panel" id="servicesPanel" style="left: 360px; top: 20px; width: 400px; height: 350px;">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="icon icon-services">📋</div>
+                        可用服务列表
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn" onclick="minimizePanel('servicesPanel')">−</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="services-list">
+                        <div class="service-category">
+                            <div class="category-title">🔧 硬件巡检服务 (001-005)</div>
+                            <div class="service-item" onclick="sendServiceCommand('service_001_system_inspection')">
+                                <span class="service-code">service_001_system_inspection:</span> 执行全系统状态巡检，查询数据库获取内存、硬盘使用率异常的服务器IP列表和环境监控数据
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_002_memory_inspection')">
+                                <span class="service-code">service_002_memory_inspection:</span> 对指定IP服务器进行详细内存巡检，通过SSH连接获取内存使用率、硬件信息、进程占用情况
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_003_disk_inspection')">
+                                <span class="service-code">service_003_disk_inspection:</span> 对指定IP服务器进行详细硬盘巡检，通过SSH连接获取硬盘使用率、硬件信息、大文件分析
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_004_hardware_summary')">
+                                <span class="service-code">service_004_hardware_summary:</span> 生成硬件巡检AI智能分析报告，基于内存和硬盘巡检结果提供采购建议和优化方案
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_005_full_inspection')">
+                                <span class="service-code">service_005_full_inspection:</span> 执行完整巡检流程，按顺序调用系统巡检->内存巡检->硬盘巡检->AI分析报告的完整自动化流程
+                            </div>
+                        </div>
+
+                        <div class="service-category">
+                            <div class="category-title">📈 基础监控服务 (006-010)</div>
+                            <div class="service-item" onclick="sendServiceCommand('service_006_log_analysis')">
+                                <span class="service-code">service_006_log_analysis:</span> 智能日志文件分析，支持错误检测、模式识别、AI智能分析等功能
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_007_daily_report')">
+                                <span class="service-code">service_007_daily_report:</span> 生成昨日监控数据的智能分析日报，包含系统状态、异常分析、风险预测等
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_008_weekly_report')">
+                                <span class="service-code">service_008_weekly_report:</span> 生成上周监控数据的智能分析周报，包含趋势分析、异常统计、运维建议等
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_009_service_monitoring')">
+                                <span class="service-code">service_009_service_monitoring:</span> 执行服务状态监控检查，检测各平台服务的运行状态、端口连通性、进程状态等
+                            </div>
+                            <div class="service-item" onclick="sendServiceCommand('service_010_platform_monitoring')">
+                                <span class="service-code">service_010_platform_monitoring:</span> 执行平台性能监控，获取CPU、内存、磁盘使用率等性能指标并进行异常检测
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="resize-handle"></div>
+            </div>
+
+            <div class="draggable-panel" id="chatPanel" style="left: 780px; top: 20px; width: 500px; height: 450px;">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="icon icon-chat">💬</div>
+                        智能运维对话
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn" onclick="openFullscreen()">🔍</button>
+                        <button class="panel-btn" onclick="minimizePanel('chatPanel')">−</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message assistant">
+                                <div class="timestamp">系统</div>
+                                🤖 智能运维助手已就绪，请输入您的运维需求...<br>
+                                <small style="opacity: 0.7;">💡 支持指令：完整巡检、生成日报、内存检查、硬盘巡检、服务监控等</small>
+                            </div>
+                        </div>
+
+                        <div class="typing-indicator" id="typingIndicator">
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput"
+                                   placeholder="请输入运维指令或点击左侧服务列表..."
+                                   onkeypress="handleChatKeyPress(event)"
+                                   autocomplete="off">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">
+                                <span id="sendBtnText">发送</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="resize-handle"></div>
+            </div>
+
+            <div class="draggable-panel" id="reportPanel" style="left: 360px; top: 390px; width: 400px; height: 300px;">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="icon icon-report">📊</div>
+                        AI分析报告
+                    </div>
+                    <div class="panel-controls">
+                        <button class="panel-btn" onclick="minimizePanel('reportPanel')">−</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="ai-report-content" id="aiReportContent">
+                        <div class="ai-report-loading">📄 正在加载报告...</div>
+                    </div>
+                    <div class="ai-report-timestamp" id="aiReportTimestamp"></div>
+                </div>
+                <div class="resize-handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <div class="fullscreen-content">
+            <div class="fullscreen-header">
+                <div class="fullscreen-title">🤖 智能运维对话 - 全屏模式</div>
+                <button class="close-btn" onclick="closeFullscreen()">✕ 关闭</button>
+            </div>
+            <div class="fullscreen-chat">
+                <div class="fullscreen-messages" id="fullscreenMessages">
+                </div>
+
+                <div class="typing-indicator" id="fullscreenTypingIndicator" style="display: none;">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="fullscreen-input-container">
+                    <input type="text" class="fullscreen-input" id="fullscreenInput"
+                           placeholder="请输入运维指令..."
+                           onkeypress="handleFullscreenKeyPress(event)"
+                           autocomplete="off">
+                    <button class="btn btn-primary" onclick="sendFullscreenMessage()">
+                        <span id="fullscreenSendBtnText">发送</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let lastLogCheckTime = 0;
+        let messageCount = 0;
+        let logCount = 0;
+        let isTyping = false;
+        let messageQueue = [];
+        let processQueueTimer = null;
+        let autoScrollEnabled = true;
+        let userScrolledUp = false;
+        let lastScrollTop = 0;
+        let isFullscreen = false;
+        let dragData = null;
+        let resizeData = null;
+        let logCheckFiles = [
+            'full_inspection.py',
+            'hardware_summary_service.py',
+            'memory_inspection_service.py',
+            'disk_inspection_service.py',
+            'system_inspection_service.py',
+            'mcp_server.py'
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 智能运维系统初始化中...');
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            loadCountdowns();
+            setInterval(loadCountdowns, 3000);
+            loadServiceStatus();
+            setInterval(loadServiceStatus, 3000);
+            loadChatLogs();
+            setInterval(loadChatLogs, 1000);
+            loadAIReport();
+            setInterval(loadAIReport, 5000);
+            connectWebSocket();
+            updateStats();
+            setupChatScrollListener();
+            setupDragAndResize();
+            loadPanelPositions();
+            console.log('✅ 系统初始化完成');
+        });
+
+        function setupDragAndResize() {
+            const panels = document.querySelectorAll('.draggable-panel');
+
+            panels.forEach(panel => {
+                const header = panel.querySelector('.panel-header');
+                const resizeHandle = panel.querySelector('.resize-handle');
+
+                header.addEventListener('mousedown', startDrag);
+                resizeHandle.addEventListener('mousedown', startResize);
+            });
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+
+        function startDrag(e) {
+            if (e.target.classList.contains('panel-btn')) return;
+
+            const panel = e.target.closest('.draggable-panel');
+            const rect = panel.getBoundingClientRect();
+            const workspace = document.getElementById('workspace');
+            const workspaceRect = workspace.getBoundingClientRect();
+
+            dragData = {
+                panel: panel,
+                offsetX: e.clientX - rect.left,
+                offsetY: e.clientY - rect.top,
+                workspaceRect: workspaceRect
+            };
+
+            panel.classList.add('dragging');
+            e.preventDefault();
+        }
+
+        function startResize(e) {
+            const panel = e.target.closest('.draggable-panel');
+            const rect = panel.getBoundingClientRect();
+
+            resizeData = {
+                panel: panel,
+                startX: e.clientX,
+                startY: e.clientY,
+                startWidth: rect.width,
+                startHeight: rect.height
+            };
+
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleMouseMove(e) {
+            if (dragData) {
+                const workspace = dragData.workspaceRect;
+                let newX = e.clientX - workspace.left - dragData.offsetX;
+                let newY = e.clientY - workspace.top - dragData.offsetY;
+
+                newX = Math.max(0, Math.min(newX, workspace.width - dragData.panel.offsetWidth));
+                newY = Math.max(0, Math.min(newY, workspace.height - dragData.panel.offsetHeight));
+
+                dragData.panel.style.left = newX + 'px';
+                dragData.panel.style.top = newY + 'px';
+
+                savePanelPosition(dragData.panel.id, newX, newY);
+            }
+
+            if (resizeData) {
+                const deltaX = e.clientX - resizeData.startX;
+                const deltaY = e.clientY - resizeData.startY;
+
+                let newWidth = Math.max(200, resizeData.startWidth + deltaX);
+                let newHeight = Math.max(150, resizeData.startHeight + deltaY);
+
+                resizeData.panel.style.width = newWidth + 'px';
+                resizeData.panel.style.height = newHeight + 'px';
+
+                savePanelSize(resizeData.panel.id, newWidth, newHeight);
+            }
+        }
+
+        function handleMouseUp() {
+            if (dragData) {
+                dragData.panel.classList.remove('dragging');
+                dragData = null;
+            }
+
+            resizeData = null;
+        }
+
+        function minimizePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('panel-minimized');
+
+            const btn = panel.querySelector('.panel-controls .panel-btn');
+            btn.textContent = panel.classList.contains('panel-minimized') ? '+' : '−';
+
+            savePanelState(panelId, panel.classList.contains('panel-minimized'));
+        }
+
+        function savePanelPosition(panelId, x, y) {
+            localStorage.setItem(`panel_${panelId}_pos`, JSON.stringify({x, y}));
+        }
+
+        function savePanelSize(panelId, width, height) {
+            localStorage.setItem(`panel_${panelId}_size`, JSON.stringify({width, height}));
+        }
+
+        function savePanelState(panelId, minimized) {
+            localStorage.setItem(`panel_${panelId}_state`, JSON.stringify({minimized}));
+        }
+
+        function loadPanelPositions() {
+            const panels = document.querySelectorAll('.draggable-panel');
+
+            panels.forEach(panel => {
+                const panelId = panel.id;
+
+                const posData = localStorage.getItem(`panel_${panelId}_pos`);
+                if (posData) {
+                    const {x, y} = JSON.parse(posData);
+                    panel.style.left = x + 'px';
+                    panel.style.top = y + 'px';
+                }
+
+                const sizeData = localStorage.getItem(`panel_${panelId}_size`);
+                if (sizeData) {
+                    const {width, height} = JSON.parse(sizeData);
+                    panel.style.width = width + 'px';
+                    panel.style.height = height + 'px';
+                }
+
+                const stateData = localStorage.getItem(`panel_${panelId}_state`);
+                if (stateData) {
+                    const {minimized} = JSON.parse(stateData);
+                    if (minimized) {
+                        panel.classList.add('panel-minimized');
+                        const btn = panel.querySelector('.panel-controls .panel-btn');
+                        if (btn && btn.textContent === '−') {
+                            btn.textContent = '+';
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupChatScrollListener() {
+            const chatMessages = document.getElementById('chatMessages');
+
+            chatMessages.addEventListener('scroll', function() {
+                const isAtBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 5;
+                const scrollDirection = chatMessages.scrollTop > lastScrollTop ? 'down' : 'up';
+
+                if (scrollDirection === 'up' && !isAtBottom) {
+                    userScrolledUp = true;
+                    autoScrollEnabled = false;
+                } else if (isAtBottom) {
+                    userScrolledUp = false;
+                    autoScrollEnabled = true;
+                }
+
+                lastScrollTop = chatMessages.scrollTop;
+            });
+        }
+
+        function scrollChatToBottom(force = false) {
+            const chatMessages = isFullscreen ? document.getElementById('fullscreenMessages') : document.getElementById('chatMessages');
+
+            if (autoScrollEnabled || force) {
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+            }
+        }
+
+        function openFullscreen() {
+            isFullscreen = true;
+            const overlay = document.getElementById('fullscreenOverlay');
+            const fullscreenMessages = document.getElementById('fullscreenMessages');
+            const chatMessages = document.getElementById('chatMessages');
+
+            fullscreenMessages.innerHTML = chatMessages.innerHTML;
+            overlay.style.display = 'block';
+
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                scrollChatToBottom(true);
+            }, 100);
+        }
+
+        function closeFullscreen() {
+            isFullscreen = false;
+            const overlay = document.getElementById('fullscreenOverlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function handleFullscreenKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendFullscreenMessage();
+            }
+        }
+
+        function sendFullscreenMessage() {
+            const input = document.getElementById('fullscreenInput');
+            const message = input.value.trim();
+            if (!message || isTyping) return;
+
+            input.value = '';
+            document.getElementById('chatInput').value = message;
+            sendChatMessage();
+        }
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            console.log(`🔌 连接WebSocket: ${wsUrl}`);
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = function() {
+                console.log('✅ WebSocket连接成功');
+                updateConnectionStatus(true);
+            };
+
+            ws.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                } catch (error) {
+                    console.error('❌ WebSocket消息解析失败:', error);
+                }
+            };
+
+            ws.onclose = function() {
+                console.log('❌ WebSocket连接断开');
+                updateConnectionStatus(false);
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            ws.onerror = function(error) {
+                console.error('❌ WebSocket错误:', error);
+                updateConnectionStatus(false);
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'log') {
+                messageQueue.push({
+                    type: 'log',
+                    content: `[${data.service}] ${data.message}`,
+                    timestamp: new Date().toLocaleTimeString('zh-CN')
+                });
+                logCount++;
+                updateSyncIndicator();
+                processMessageQueue();
+            } else if (data.type === 'service_status') {
+                loadServiceStatus();
+            } else if (data.type === 'chat_message') {
+                messageQueue.push({
+                    type: data.data.type,
+                    content: data.data.content,
+                    timestamp: data.data.timestamp
+                });
+                if (data.data.type !== 'log') {
+                    messageCount++;
+                }
+                updateSyncIndicator();
+                processMessageQueue();
+            }
+        }
+
+        function processMessageQueue() {
+            if (processQueueTimer) {
+                clearTimeout(processQueueTimer);
+            }
+
+            processQueueTimer = setTimeout(() => {
+                while (messageQueue.length > 0) {
+                    const message = messageQueue.shift();
+                    addChatMessageDirect(message.type, message.content, message.timestamp);
+                }
+                updateStats();
+            }, 100);
+        }
+
+        function updateStats() {
+            const statsBar = document.getElementById('statsBar');
+            statsBar.textContent = `消息: ${messageCount} | 日志: ${logCount}`;
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            if (connected) {
+                status.textContent = '🟢 已连接';
+                status.className = 'connection-status connected';
+            } else {
+                status.textContent = '🔴 未连接';
+                status.className = 'connection-status disconnected';
+            }
+        }
+
+        function updateSyncIndicator() {
+            const indicator = document.getElementById('syncIndicator');
+            indicator.textContent = '✅ 已同步';
+            indicator.style.background = 'rgba(212, 237, 218, 0.9)';
+            indicator.style.color = '#155724';
+            indicator.style.borderColor = '#c3e6cb';
+
+            setTimeout(() => {
+                indicator.textContent = '🔄 实时同步';
+                indicator.style.background = 'rgba(227, 242, 253, 0.9)';
+                indicator.style.color = '#1565c0';
+                indicator.style.borderColor = '#bbdefb';
+            }, 1000);
+        }
+
+        async function loadChatLogs() {
+            const currentTime = Date.now();
+
+            for (const filename of logCheckFiles) {
+                try {
+                    const response = await fetch(`/api/service/logs/${filename}?since=${lastLogCheckTime}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.logs && data.logs.length > 0) {
+                            data.logs.forEach(log => {
+                                messageQueue.push({
+                                    type: 'log',
+                                    content: `[${filename}] ${log.message}`,
+                                    timestamp: log.timestamp
+                                });
+                                logCount++;
+                            });
+                            updateSyncIndicator();
+                            processMessageQueue();
+                        }
+                    }
+                } catch (error) {
+                    console.error(`❌ 加载${filename}日志失败:`, error);
+                }
+            }
+
+            lastLogCheckTime = currentTime;
+        }
+
+        function addChatMessageDirect(type, content, timestamp) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const fullscreenMessagesContainer = document.getElementById('fullscreenMessages');
+
+            const lastMessages = Array.from(messagesContainer.children).slice(-3);
+            const contentPreview = content.substring(0, 50);
+            const isDuplicate = lastMessages.some(msg =>
+                msg.textContent.includes(contentPreview) &&
+                msg.classList.contains(type)
+            );
+
+            if (isDuplicate) {
+                return;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type} new`;
+
+            const fullscreenMessageDiv = document.createElement('div');
+            fullscreenMessageDiv.className = `fullscreen-message ${type} new`;
+
+            let displayContent = content;
+            let icon = '';
+
+            switch(type) {
+                case 'log':
+                    icon = '📋';
+                    if (content.includes('full_inspection.py') ||
+                        content.includes('hardware_summary_service.py') ||
+                        content.includes('memory_inspection_service.py') ||
+                        content.includes('disk_inspection_service.py') ||
+                        content.includes('system_inspection_service.py') ||
+                        content.includes('mcp_server.py')) {
+                        icon = '🔍';
+                    }
+                    break;
+                case 'error':
+                    icon = '❌';
+                    break;
+                case 'user':
+                    icon = '👤';
+                    break;
+                case 'assistant':
+                    icon = '🤖';
+                    break;
+                default:
+                    break;
+            }
+
+            const messageHTML = `
+                <div class="timestamp">${timestamp}</div>
+                ${icon ? icon + ' ' : ''}${displayContent.replace(/\n/g, '<br>')}
+            `;
+
+            messageDiv.innerHTML = messageHTML;
+            fullscreenMessageDiv.innerHTML = messageHTML;
+
+            messagesContainer.appendChild(messageDiv);
+            if (isFullscreen) {
+                fullscreenMessagesContainer.appendChild(fullscreenMessageDiv);
+            }
+
+            setTimeout(() => {
+                messageDiv.classList.remove('new');
+                fullscreenMessageDiv.classList.remove('new');
+            }, 500);
+
+            scrollChatToBottom();
+
+            const messages = messagesContainer.children;
+            if (messages.length > 300) {
+                for (let i = 1; i < 50; i++) {
+                    if (messages[i] && !messages[i].classList.contains('assistant')) {
+                        messagesContainer.removeChild(messages[i]);
+                    }
+                }
+            }
+
+            if (isFullscreen) {
+                const fullscreenMessages = fullscreenMessagesContainer.children;
+                if (fullscreenMessages.length > 300) {
+                    for (let i = 1; i < 50; i++) {
+                        if (fullscreenMessages[i] && !fullscreenMessages[i].classList.contains('assistant')) {
+                            fullscreenMessagesContainer.removeChild(fullscreenMessages[i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            if (isFullscreen) {
+                document.getElementById('fullscreenTypingIndicator').style.display = 'block';
+            }
+            isTyping = true;
+            scrollChatToBottom(true);
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+            if (isFullscreen) {
+                document.getElementById('fullscreenTypingIndicator').style.display = 'none';
+            }
+            isTyping = false;
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                weekday: 'long'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        async function loadCountdowns() {
+            try {
+                const response = await fetch('/api/countdown');
+                const data = await response.json();
+
+                const grid = document.getElementById('countdownGrid');
+                grid.innerHTML = '';
+
+                Object.entries(data).forEach(([serviceId, info]) => {
+                    const item = document.createElement('div');
+                    item.className = 'countdown-item';
+
+                    const seconds = info.seconds;
+                    const timeText = formatCountdown(seconds);
+
+                    item.innerHTML = `
+                        <span class="countdown-service">service_${serviceId} - ${info.name}</span>
+                        <span class="countdown-time">${timeText}</span>
+                    `;
+
+                    if (seconds <= 60) {
+                        item.style.borderLeftColor = '#ff6b6b';
+                        item.style.background = '#ffe6e6';
+                        item.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.3)';
+                    } else if (seconds <= 300) {
+                        item.style.borderLeftColor = '#ffc107';
+                        item.style.background = '#fff3cd';
+                    }
+
+                    grid.appendChild(item);
+                });
+            } catch (error) {
+                console.error('❌ 加载倒计时失败:', error);
+            }
+        }
+
+        function formatCountdown(seconds) {
+            if (seconds <= 0) return '⚡ 即将执行';
+
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+
+            if (days > 0) {
+                return `${days}天${hours}小时${minutes}分钟`;
+            } else if (hours > 0) {
+                return `${hours}小时${minutes}分钟${secs}秒`;
+            } else if (minutes > 0) {
+                return `${minutes}分钟${secs}秒`;
+            } else {
+                return `${secs}秒`;
+            }
+        }
+
+        async function loadServiceStatus() {
+            try {
+                const response = await fetch('/api/service/status');
+                const data = await response.json();
+
+                Object.entries(data).forEach(([serviceName, status]) => {
+                    updateServiceUI(serviceName, status.running);
+                });
+            } catch (error) {
+                console.error('❌ 加载服务状态失败:', error);
+            }
+        }
+
+        function updateServiceUI(serviceName, running) {
+            const btn = document.getElementById(`${serviceName}Btn`);
+            const indicator = document.getElementById(`${serviceName}Indicator`);
+            const status = document.getElementById(`${serviceName}Status`);
+
+            if (running) {
+                btn.textContent = '停止';
+                btn.className = 'btn btn-danger';
+                indicator.className = 'status-indicator running';
+                status.className = 'service-status running';
+            } else {
+                btn.textContent = '启动';
+                btn.className = 'btn btn-success';
+                indicator.className = 'status-indicator stopped';
+                status.className = 'service-status stopped';
+            }
+        }
+
+        async function loadAIReport() {
+            try {
+                const response = await fetch('/api/file/hardware_summary.txt');
+                const contentEl = document.getElementById('aiReportContent');
+                const timestampEl = document.getElementById('aiReportTimestamp');
+
+                if (response.ok) {
+                    const content = await response.text();
+                    if (content.trim()) {
+                        contentEl.innerHTML = markdownToHtml(content);
+                        timestampEl.textContent = `最后更新: ${new Date().toLocaleString('zh-CN')}`;
+                    } else {
+                        contentEl.innerHTML = '<div class="ai-report-empty">📄 暂无AI分析报告<br><small>执行硬件巡检后将生成智能分析报告</small></div>';
+                        timestampEl.textContent = '';
+                    }
+                } else {
+                    contentEl.innerHTML = '<div class="ai-report-error">❌ 文件不存在或无法访问</div>';
+                    timestampEl.textContent = '';
+                }
+            } catch (error) {
+                const contentEl = document.getElementById('aiReportContent');
+                contentEl.innerHTML = `<div class="ai-report-error">❌ 网络错误: ${error.message}</div>`;
+                console.error('❌ 加载AI报告失败:', error);
+            }
+        }
+
+        function markdownToHtml(markdown) {
+            let html = markdown;
+
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+
+            html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/^(\d+)\. (.*$)/gim, '<li>$2</li>');
+
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            html = html.replace(/<\/li>\s*<li>/g, '</li><li>');
+
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+            html = html.replace(/\n/g, '<br>');
+
+            html = html.replace(/(<br>){2,}/g, '</p><p>');
+            html = html.replace(/^((?!<[h123]|<ul|<blockquote).*?)(<br>|$)/gm, '<p>$1</p>');
+
+            return html;
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        function sendServiceCommand(serviceCode) {
+            const input = document.getElementById('chatInput');
+            input.value = serviceCode;
+            sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message || isTyping) return;
+
+            input.value = '';
+            if (isFullscreen) {
+                document.getElementById('fullscreenInput').value = '';
+            }
+            showTypingIndicator();
+
+            const sendBtn = document.getElementById('sendBtnText');
+            const fullscreenSendBtn = document.getElementById('fullscreenSendBtnText');
+            const originalText = sendBtn.textContent;
+            sendBtn.innerHTML = '<div class="loading"></div>';
+            if (isFullscreen) {
+                fullscreenSendBtn.innerHTML = '<div class="loading"></div>';
+            }
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    addChatMessageDirect('error', `❌ 错误: ${result.error}`, new Date().toLocaleTimeString('zh-CN'));
+                    messageCount++;
+                    updateStats();
+                }
+            } catch (error) {
+                addChatMessageDirect('error', `❌ 网络错误: ${error.message}`, new Date().toLocaleTimeString('zh-CN'));
+                messageCount++;
+                updateStats();
+            } finally {
+                hideTypingIndicator();
+                sendBtn.textContent = originalText;
+                if (isFullscreen) {
+                    fullscreenSendBtn.textContent = originalText;
+                }
+            }
+        }
+
+        async function toggleService(serviceName) {
+            try {
+                const response = await fetch(`/api/service/${serviceName}/toggle`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log(`✅ 服务 ${serviceName} ${result.status}`);
+                    addChatMessageDirect('log', `🔧 服务 ${serviceName} ${result.status === 'started' ? '已启动' : '已停止'}`, new Date().toLocaleTimeString('zh-CN'));
+                    logCount++;
+                    updateStats();
+                } else {
+                    addChatMessageDirect('error', `❌ 服务操作失败: ${result.error}`, new Date().toLocaleTimeString('zh-CN'));
+                    messageCount++;
+                    updateStats();
+                }
+            } catch (error) {
+                addChatMessageDirect('error', `❌ 网络错误: ${error.message}`, new Date().toLocaleTimeString('zh-CN'));
+                messageCount++;
+                updateStats();
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && isFullscreen) {
+                closeFullscreen();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                if (!ws || ws.readyState !== WebSocket.OPEN) {
+                    connectWebSocket();
+                }
+            }
+        });
+
+        window.addEventListener('beforeunload', function() {
+            if (ws) {
+                ws.close();
+            }
+        });
+    </script>
+</body>
+</html>

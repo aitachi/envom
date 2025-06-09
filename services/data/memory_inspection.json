@@ -1,0 +1,158 @@
+{
+  "generation_time": "2025-06-08 17:31:03",
+  "inspected_count": 1,
+  "success_count": 1,
+  "failed_count": 0,
+  "no_permission_count": 0,
+  "results": {
+    "192.168.10.152": {
+      "ip": "192.168.10.152",
+      "status": "巡检成功",
+      "timestamp": "2025-06-08 17:31:03",
+      "ssh_connection": {
+        "status": "连接成功",
+        "user": "root"
+      },
+      "memory_usage": {
+        "total_memory": "11Gi",
+        "used_memory": "10Gi",
+        "available_memory": "995Mi",
+        "usage_percent": 90.91,
+        "total_memory_gb": 11.0,
+        "raw_output": "total        used        free      shared  buff/cache   available\n内存：       11Gi        10Gi       161Mi       3.0Mi       1.1Gi       995Mi\n交换：      2.0Gi       2.0Gi       0.0Ki"
+      },
+      "hardware_info": {
+        "total_slots": 2,
+        "installed_slots": 2,
+        "empty_slots": 0,
+        "total_installed_memory_gb": 12.0,
+        "max_installed_slot_capacity_gb": 8.0,
+        "memory_modules": [
+          {
+            "size": "4 GB",
+            "type": "DDR4",
+            "speed": "2133 MT/s",
+            "manufacturer": "SK Hynix",
+            "part_number": "HMA451U6AFR8N-TF",
+            "voltage": "Unknown"
+          },
+          {
+            "size": "8 GB",
+            "type": "DDR4",
+            "speed": "2133 MT/s",
+            "manufacturer": "0819",
+            "part_number": "STK4U2666D19081C",
+            "voltage": "Unknown"
+          }
+        ]
+      },
+      "motherboard_info": {
+        "manufacturer": "TSINGHUA TONGFANG COMPUTER",
+        "product_name": "H110-4S",
+        "version": "",
+        "chipset": "未知",
+        "max_total_memory": "32GB (估算)",
+        "max_memory_per_slot": "16GB (估算)",
+        "supported_memory_types": [
+          "DDR4-2666",
+          "DDR4-2400",
+          "DDR4-2133"
+        ],
+        "recommended_slots": 2
+      },
+      "top_processes": [
+        {
+          "user": "howso",
+          "pid": "14275",
+          "cpu_percent": "0.1",
+          "memory_percent": "80.6",
+          "memory_usage": "9815460",
+          "command": "python3 memory_load.py"
+        },
+        {
+          "user": "howso",
+          "pid": "1804",
+          "cpu_percent": "0.0",
+          "memory_percent": "2.1",
+          "memory_usage": "258700",
+          "command": "/snap/snap-store/959/usr/bin/snap-store --gapplica"
+        },
+        {
+          "user": "howso",
+          "pid": "132347",
+          "cpu_percent": "0.0",
+          "memory_percent": "1.2",
+          "memory_usage": "147188",
+          "command": "/usr/bin/python3 /usr/bin/update-manager --no-upda"
+        },
+        {
+          "user": "howso",
+          "pid": "1462",
+          "cpu_percent": "0.0",
+          "memory_percent": "0.5",
+          "memory_usage": "65040",
+          "command": "/usr/bin/gnome-shell"
+        },
+        {
+          "user": "root",
+          "pid": "245",
+          "cpu_percent": "0.0",
+          "memory_percent": "0.4",
+          "memory_usage": "49668",
+          "command": "/lib/systemd/systemd-journald"
+        },
+        {
+          "user": "root",
+          "pid": "5244",
+          "cpu_percent": "0.1",
+          "memory_percent": "0.3",
+          "memory_usage": "44060",
+          "command": "./gse_agent -f /usr/local/gse/agent/etc/agent.conf"
+        },
+        {
+          "user": "root",
+          "pid": "1036",
+          "cpu_percent": "0.0",
+          "memory_percent": "0.3",
+          "memory_usage": "42524",
+          "command": "/usr/libexec/packagekitd"
+        },
+        {
+          "user": "root",
+          "pid": "208397",
+          "cpu_percent": "0.3",
+          "memory_percent": "0.2",
+          "memory_usage": "32292",
+          "command": "/usr/libexec/fwupd/fwupd"
+        },
+        {
+          "user": "howso",
+          "pid": "1825",
+          "cpu_percent": "0.0",
+          "memory_percent": "0.2",
+          "memory_usage": "25140",
+          "command": "/usr/libexec/tracker-miner-fs-3"
+        }
+      ],
+      "system_info": {
+        "meminfo": "MemTotal:       12175200 kB\nMemFree:          165444 kB\nMemAvailable:    1019156 kB\nBuffers:          186244 kB\nCached:           521876 kB\nSwapCached:        20308 kB\nActive:          3110680 kB\nInactive:        8049996 kB\nActive(anon):    2948272 kB\nInactive(anon):  7504320 kB",
+        "uptime": "17:31:03 up 12 days, 22:34,  2 users,  load average: 0.00, 0.01, 0.00"
+      },
+      "analysis": {
+        "status": "严重",
+        "warnings": [
+          "内存使用率过高: 90.91%",
+          "进程 python3 memory_load.py 占用内存过高: 80.6%"
+        ],
+        "recommendations": [
+          "内存使用率高达90.91%，建议立即升级内存",
+          "可通过替换现有内存条升级: 当前最大单条8.0GB，可升级至16.0GB",
+          "最大可升级至: 2x16.0GB = 32GB",
+          "支持内存类型: DDR4-2666, DDR4-2400, DDR4-2133",
+          "建议选择DDR4-3200或更高频率内存"
+        ]
+      },
+      "error": null
+    }
+  }
+}

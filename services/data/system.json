@@ -1,0 +1,29 @@
+{
+  "generation_time": "2025-06-08 17:30:49",
+  "query_parameters": {
+    "memory_threshold": 70,
+    "disk_threshold": 80
+  },
+  "abnormal_memory_ips": [
+    "192.168.10.152"
+  ],
+  "abnormal_disk_ips": [],
+  "server_monitoring": {
+    "abnormal_memory_ips": [
+      "192.168.10.152"
+    ],
+    "abnormal_disk_ips": [],
+    "memory_details": [
+      {
+        "ip": "192.168.10.152",
+        "memory_usage": 89.04,
+        "memory_status": "异常",
+        "collect_time": "2025-06-08 14:57:10"
+      }
+    ],
+    "disk_details": []
+  },
+  "environment_monitoring": {
+    "abnormal_environment_details": []
+  }
+}

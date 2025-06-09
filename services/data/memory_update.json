@@ -1,0 +1,79 @@
+[
+  {
+    "time": 1750000263.0,
+    "datetime": "2025-06-08 17:31:03",
+    "server_ip": "192.168.10.152",
+    "applied": 0,
+    "solved": 0,
+    "pricing_request": 0,
+    "current_memory": {
+      "capacity": "11GiB",
+      "usage_percent": 90.91,
+      "modules": [
+        {
+          "size": "4 GB",
+          "type": "DDR4",
+          "speed": "2133 MT/s",
+          "manufacturer": "SK Hynix",
+          "part_number": "HMA451U6AFR8N-TF"
+        },
+        {
+          "size": "8 GB",
+          "type": "DDR4",
+          "speed": "2133 MT/s",
+          "manufacturer": "0819",
+          "part_number": "STK4U2666D19081C"
+        }
+      ],
+      "slots": {
+        "total": 2,
+        "installed": 2,
+        "empty": 0
+      }
+    },
+    "motherboard": {
+      "manufacturer": "TSINGHUA TONGFANG COMPUTER",
+      "model": "H110-4S",
+      "max_memory": "32GB",
+      "slots": 2
+    },
+    "system_performance": {
+      "high_memory_processes": [
+        {
+          "command": "python3 memory_load.py",
+          "memory_percent": 80.6,
+          "user": "howso"
+        }
+      ],
+      "uptime": "12 days",
+      "connection_status": "SSH连接成功"
+    },
+    "upgrade_recommendation": {
+      "model": "DDR4-3200",
+      "specifications": "16GB",
+      "quantity": 2,
+      "priority": "高"
+    },
+    "pricing_info": {
+      "suggest_price": "",
+      "currency": "CNY",
+      "suggest_user": "",
+      "suggest_time": ""
+    },
+    "upgrade_justification": "内存使用率高达90.91%，单进程占用80.6%内存，存在严重性能瓶颈风险",
+    "impact_analysis": {
+      "performance_improvement": "预计内存压力降低60-70%，支持更高并发负载",
+      "memory_relief": "升级至32GB后可用内存将提升3倍"
+    },
+    "upgrade_timeline": {
+      "procurement": "2周",
+      "installation": "1工作日",
+      "testing": "3工作日"
+    },
+    "appliedtime": null,
+    "solvedtime": null,
+    "memory_id": "MEM15220250615001",
+    "record_id": "20250608001",
+    "inspection_date": "20250608"
+  }
+]

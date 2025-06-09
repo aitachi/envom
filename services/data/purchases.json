@@ -1,0 +1,54 @@
+[
+  {
+    "ApplyNo": "20250603222624A007",
+    "server_ip": "192.168.10.152",
+    "category": "memory",
+    "type": "DDR4",
+    "size": "32GB",
+    "frequency": "2666MHz",
+    "quantity": 2,
+    "unit_price": 600,
+    "total_price": 1200,
+    "reason": "当前内存不足，需支持高负载应用",
+    "solved": 0
+  },
+  {
+    "ApplyNo": "20250605115532A028",
+    "server_ip": "192.168.10.152",
+    "category": "disk",
+    "type": "NVMe",
+    "size": "1TB",
+    "frequency": "NVMe",
+    "quantity": 1,
+    "unit_price": 800,
+    "total_price": 800,
+    "reason": "当前硬盘为传统HDD，升级至NVMe SSD可显著提升I/O性能，支持高并发应用",
+    "solved": 1
+  },
+  {
+    "ApplyNo": "20250603222624A008",
+    "server_ip": "192.168.121.23",
+    "category": "disk",
+    "type": "NVMe",
+    "size": "1TB",
+    "frequency": "NVMe",
+    "quantity": 1,
+    "unit_price": 800,
+    "total_price": 800,
+    "reason": "根分区接近满，需扩容",
+    "solved": 0
+  },
+  {
+    "ApplyNo": "20250603222624A009",
+    "server_ip": "192.168.121.26",
+    "category": "disk",
+    "type": "SATA",
+    "size": "4TB",
+    "frequency": "SATA",
+    "quantity": 1,
+    "unit_price": 1500,
+    "total_price": 1500,
+    "reason": "根分区92%，需长期存储扩展",
+    "solved": 0
+  }
+]

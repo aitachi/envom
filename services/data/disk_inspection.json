@@ -1,0 +1,161 @@
+{
+  "generation_time": "2025-06-08 17:31:25",
+  "inspected_count": 1,
+  "success_count": 1,
+  "failed_count": 0,
+  "no_permission_count": 0,
+  "results": {
+    "192.168.10.152": {
+      "ip": "192.168.10.152",
+      "status": "巡检成功",
+      "timestamp": "2025-06-08 17:31:22",
+      "ssh_connection": {
+        "status": "连接成功",
+        "user": "root"
+      },
+      "disk_usage": [
+        {
+          "filesystem": "/dev/sda2",
+          "size": "916G",
+          "used": "14G",
+          "available": "856G",
+          "usage_percent": "2%",
+          "mount_point": "/"
+        },
+        {
+          "filesystem": "/dev/sda1",
+          "size": "511M",
+          "used": "6.1M",
+          "available": "505M",
+          "usage_percent": "2%",
+          "mount_point": "/boot/efi"
+        }
+      ],
+      "hardware_info": [
+        {
+          "name": "loop0",
+          "size": "497M",
+          "type": "loop",
+          "mount_point": "/snap/gnome-42-2204/141"
+        },
+        {
+          "name": "loop1",
+          "size": "4K",
+          "type": "loop",
+          "mount_point": "/snap/bare/5"
+        },
+        {
+          "name": "loop2",
+          "size": "73.9M",
+          "type": "loop",
+          "mount_point": "/snap/core22/1981"
+        },
+        {
+          "name": "loop3",
+          "size": "74.2M",
+          "type": "loop",
+          "mount_point": ""
+        },
+        {
+          "name": "loop4",
+          "size": "91.7M",
+          "type": "loop",
+          "mount_point": "/snap/gtk-common-themes/1535"
+        },
+        {
+          "name": "loop5",
+          "size": "12.3M",
+          "type": "loop",
+          "mount_point": "/snap/snap-store/959"
+        },
+        {
+          "name": "loop6",
+          "size": "40.4M",
+          "type": "loop",
+          "mount_point": "/snap/snapd/20671"
+        },
+        {
+          "name": "loop7",
+          "size": "452K",
+          "type": "loop",
+          "mount_point": "/snap/snapd-desktop-integration/83"
+        },
+        {
+          "name": "loop8",
+          "size": "50.9M",
+          "type": "loop",
+          "mount_point": "/snap/snapd/24505"
+        },
+        {
+          "name": "loop9",
+          "size": "73.9M",
+          "type": "loop",
+          "mount_point": "/snap/core22/1963"
+        },
+        {
+          "name": "loop10",
+          "size": "568K",
+          "type": "loop",
+          "mount_point": "/snap/snapd-desktop-integration/253"
+        },
+        {
+          "name": "loop11",
+          "size": "516M",
+          "type": "loop",
+          "mount_point": "/snap/gnome-42-2204/202"
+        },
+        {
+          "name": "loop12",
+          "size": "245.5M",
+          "type": "loop",
+          "mount_point": "/snap/firefox/6227"
+        },
+        {
+          "name": "loop13",
+          "size": "245.5M",
+          "type": "loop",
+          "mount_point": "/snap/firefox/6259"
+        },
+        {
+          "name": "sda",
+          "size": "931.5G",
+          "type": "disk",
+          "mount_point": ""
+        },
+        {
+          "name": "├─sda1",
+          "size": "512M",
+          "type": "part",
+          "mount_point": "/boot/efi"
+        },
+        {
+          "name": "└─sda2",
+          "size": "931G",
+          "type": "part",
+          "mount_point": "/"
+        }
+      ],
+      "smart_info": {},
+      "large_files": [
+        "/usr/lib/x86_64-linux-gnu/libLLVM-15.so.1",
+        "/usr/lib/thunderbird/libxul.so",
+        "/swapfile",
+        "/var/lib/snapd/seed/snaps/firefox_3836.snap",
+        "/var/lib/snapd/seed/snaps/gnome-42-2204_141.snap",
+        "/var/lib/snapd/cache/6547a099dd1b3e89bc2f188ea497c675a042357c15daf02996af0f2528d6123c5753292aa0c77c050112032cb7ebd66c",
+        "/var/lib/snapd/cache/8589741887a4a1dd9a4b8d389740c9bfb9c1d26ce07b060dfd945f07a30326ddcbfd6e00d6bc87e697065026d698e15f",
+        "/var/lib/snapd/cache/3902ea9f14ffb729a4c301fc4f7acf8dd6af4d0d00ba7989e393f98ca12eec786a75ffa61404c26dc5914ad66022daea",
+        "/var/lib/snapd/snaps/firefox_6259.snap",
+        "/var/lib/snapd/snaps/gnome-42-2204_202.snap"
+      ],
+      "analysis": {
+        "status": "正常",
+        "warnings": [],
+        "recommendations": [],
+        "high_usage_partitions": []
+      },
+      "error": null,
+      "directory_sizes": "180M\t/var/log\n185M\t/tmp\n674M\t/var/cache"
+    }
+  }
+}
