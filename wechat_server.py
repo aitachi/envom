@@ -24,10 +24,10 @@ class WorkWeixinCrypt:
         :param encoding_aes_key: 企业微信设置的EncodingAESKey
         :param corp_id: 企业微信的CorpID
         """
-        self.token = token or "RF2tZ75YQtSTsy9z"
+        self.token = token or "111222"
         self.encoding_aes_key = base64.b64decode(
-            (encoding_aes_key or "ulKUK3i9wxVvTplM4C9KN8zE8mJJ7Rp1f2JwWmj8tEu") + "=")
-        self.corp_id = corp_id or "ww568874482f006b53"
+            (encoding_aes_key or "1112222") + "=")
+        self.corp_id = corp_id or "ww111222"
         self.iv = self.encoding_aes_key[:16]  # 初始向量
 
     def decrypt_message(self, encrypted_msg):
