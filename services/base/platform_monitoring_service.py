@@ -21,10 +21,10 @@ logger = setup_logger(__name__)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-BK_APP_CODE = "bk_monitorv3"
-BK_APP_SECRET = "6d637229-236f-42a7-8fc3-c2125fdc5040"
+BK_APP_CODE = "123321"
+BK_APP_SECRET = "123321"
 BK_USERNAME = "admin"
-BK_PAAS_HOST = "http://paas.howso.cn"
+BK_PAAS_HOST = "http://baidu.com"
 API_URL = f"{BK_PAAS_HOST}/api/c/compapi/v2/monitor_v3/get_ts_data/"
 
 BIZ_ID = 3
