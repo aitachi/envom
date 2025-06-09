@@ -22,9 +22,9 @@ class WorkWeixinCrypt:
         :param encoding_aes_key: 企业微信设置的EncodingAESKey
         :param corp_id: 企业微信的CorpID
         """
-        self.token = token or "RF2tZ75YQtSTsy9z"
-        self.encoding_aes_key = base64.b64decode((encoding_aes_key or "ulKUK3i9wxVvTplM4C9KN8zE8mJJ7Rp1f2JwWmj8tEu") + "=")
-        self.corp_id = corp_id or "ww568874482f006b53"
+        self.token = token or "123321"
+        self.encoding_aes_key = base64.b64decode((encoding_aes_key or "123321") + "=")
+        self.corp_id = corp_id or "123321"
         self.iv = self.encoding_aes_key[:16]  # 初始向量
     
     def decrypt_message(self, encrypted_msg):
@@ -196,7 +196,7 @@ def callback():
 """
                                                     
                     # 调用发送方法
-                    send_wechat_work_message_simple(to_user="YuJian", content=md_content)
+                    send_wechat_work_message_simple(to_user="llm-aitachi", content=md_content)
                     
                 else:
                     save_to_file('decrypted.log', "消息解密失败")
