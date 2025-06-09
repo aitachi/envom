@@ -139,8 +139,8 @@ def generate_purchase_application(item):
         
         user_display = {
             'llm-aitachi': '刘浏/llm-aitachi',
-            'heiha': '王传庭/heiha',
-            'chuqi': '初七/chuqi'
+            'heiha': '王传/hei',
+            'chuqi': '初/chui'
         }.get(suggest_user, suggest_user)
 
         print(f"[DEBUG] 开始为申请编号 {memory_id} 生成采购申请...")
@@ -420,10 +420,10 @@ def memory_apply_notification(params=None):
         print(f"[DEBUG] 当前脚本目录: {current_script_dir}")
         print(f"[DEBUG] 项目根路径: {project_root}")
 
-        CORP_ID = "ww568874482f006b53"
-        CORP_SECRET = "zJM1d6Ljk86fiK4WUptdi4gmA7Gj0RkaHDYiFW6wM8g"
-        AGENT_ID = "1000008"
-        TO_USERS = ["llm-aitachi", "chuqi"]  # 修改为用户列表
+        CORP_ID = "111122"
+        CORP_SECRET = "123321"
+        AGENT_ID = "123321"
+        TO_USERS = ["llm-aitachi", "chu"]  # 修改为用户列表
 
         # 加载内存数据
         memory_data = load_memory_update_data()
