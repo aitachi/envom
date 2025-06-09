@@ -142,9 +142,9 @@ def wechat_notification_service(params=None):
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
 
-    corp_id = params.get('corp_id', "ww568874482f006b53")
-    corp_secret = params.get('corp_secret', "zJM1d6Ljk86fiK4WUptdi4gmA7Gj0RkaHDYiFW6wM8g")
-    agent_id = params.get('agent_id', "1000008")
+    corp_id = params.get('corp_id', "111222")
+    corp_secret = params.get('corp_secret', "111222")
+    agent_id = params.get('agent_id', "111222")
 
     try:
         success = send_wechat_work_message(corp_id, corp_secret, agent_id, to_user, content)
