@@ -73,9 +73,9 @@ class ChatMonitor:
         self.last_memory_check = 0
         self.memory_check_interval = 30
 
-        self.approval_users = ['chuqi', 'llm-aitachi']
-        self.pricing_users = ['llm-aitachi', 'heiha']
-        self.notification_recipients = ['heiha', 'llm-aitachi']
+        self.approval_users = ['chu', 'llm-aitachi']
+        self.pricing_users = ['llm-aitachi', 'hei']
+        self.notification_recipients = ['hei', 'llm-aitachi']
 
         self.mcp_client = MCPClient()
 
