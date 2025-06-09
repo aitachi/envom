@@ -18,13 +18,6 @@ LLM_CONFIG = {
     'model_name': 'Qwen3-32B-AWQ'
 }
 
-SSH_CONFIGS = {
-    '192.168.10.152': {'username': 'root', 'password': 'howso@123'},
-    '192.168.101.222': {'username': 'root', 'password': 'zxx@123howso?'},
-    '192.168.121.23': {'username': 'root', 'password': 'abc,.123'},
-    '192.168.121.26': {'username': 'root', 'password': 'howso@123'}
-}
-
 OUTPUT_FILES = {
     'system_inspection': 'data/system.json',
     'memory_inspection': 'data/memory_inspection.json',
