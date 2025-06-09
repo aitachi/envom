@@ -3,13 +3,21 @@
 这是一个基于AI驱动的智能运维硬件巡检监控系统，采用MCP（Model Control Protocol）协议架构，集成QWEN3-32B大模型，提供全面的服务器硬件监控、巡检、分析和自动化运维服务。系统支持企业微信通知、智能报告生成、内存升级建议等功能。
 
 核心特性
+
 🤖 AI智能分析: 集成QWEN3-32B大模型，提供智能决策和分析
+
 🔧 模块化架构: 基于MCP协议的微服务架构，支持15个专业运维服务
+
 📊 全面监控: 系统、内存、硬盘、服务状态、平台性能全方位监控
+
 📱 企业微信集成: 支持告警通知、申请审批、状态推送
+
 📈 智能报告: 自动生成日报、周报、AI分析报告
+
 🔄 自动化流程: 完整巡检流程自动化执行
+
 💾 数据持久化: MySQL数据库存储，JSON文件缓存
+
 系统架构
 架构图
 ![image](https://github.com/user-attachments/assets/be32d90d-fa50-4780-8f34-0f04488b61df)
@@ -71,10 +79,15 @@ def query_abnormal_servers(self, memory_threshold=70, disk_threshold=80):
 功能:
 
 SSH连接指定服务器进行详细内存检查
+
 获取内存使用率、硬件信息、进程占用情况
+
 分析主板信息和内存规格
+
 生成内存升级建议
+
 核心功能:
+
 
 支持DDR4/DDR5内存类型识别
 主板芯片组规格数据库(Intel/AMD)
@@ -233,7 +246,6 @@ AGENT_ID = "1000008"
 
 ```sql```
 
-
 CREATE TABLE `howso_server_performance_metrics` (
     `id` varchar(20) NOT NULL COMMENT '主键ID',
     `ip` varchar(50) NOT NULL COMMENT '服务器IP',
@@ -277,9 +289,9 @@ CREATE TABLE plat_service_monitoring (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 运维分析总结表
+
 sql
 
-复制
 CREATE TABLE operation_analysis_summary (
     id varchar(20) NOT NULL,
     report_date date NOT NULL,
@@ -340,14 +352,12 @@ Python依赖
 
 bash
 
-复制
 pip install fastapi uvicorn
 pip install paramiko pymysql
 pip install requests aiohttp
 pip install websockets
 pip install pycryptodome
-安装步骤
-克隆项目
+
 bash
 
 git clone <repository-url>
