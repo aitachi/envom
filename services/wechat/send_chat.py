@@ -112,9 +112,9 @@ def send_wechat_work_message(corp_id, corp_secret, agent_id, to_user, content):
         return False
 
 def send_wechat_work_message_simple(to_user, content):
-    CORP_ID = "ww568874482f006b53"
-    CORP_SECRET = "zJM1d6Ljk86fiK4WUptdi4gmA7Gj0RkaHDYiFW6wM8g"
-    AGENT_ID = "1000008"
+    CORP_ID = "111222"
+    CORP_SECRET = "111222"
+    AGENT_ID = "111222"
     return send_wechat_work_message(CORP_ID, CORP_SECRET, AGENT_ID, to_user, content)
 
 def wechat_notification_service(params=None):
@@ -181,9 +181,9 @@ def wechat_notification_service(params=None):
         }
 
 if __name__ == "__main__":
-    CORP_ID = "ww568874482f006b53"
-    CORP_SECRET = "zJM1d6Ljk86fiK4WUptdi4gmA7Gj0RkaHDYiFW6wM8g"
-    AGENT_ID = "1000008"
+    CORP_ID = "111222"
+    CORP_SECRET = "111222"
+    AGENT_ID = "111222"
     TO_USER = "llm-aitachi"
     MESSAGE_CONTENT = "1+1=2"
     send_wechat_work_message(CORP_ID, CORP_SECRET, AGENT_ID, TO_USER, MESSAGE_CONTENT)
