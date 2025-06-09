@@ -12,44 +12,9 @@
 💾 数据持久化: MySQL数据库存储，JSON文件缓存
 系统架构
 架构图
+![image](https://github.com/user-attachments/assets/be32d90d-fa50-4780-8f34-0f04488b61df)
 
-复制
-┌─────────────────────────────────────────────────────────────┐
-│                    前端控制台 (Web Dashboard)                   │
-│                      localhost:8080                         │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ HTTP/WebSocket
-┌─────────────────────▼───────────────────────────────────────┐
-│                   Web服务器 (FastAPI)                        │
-│                   web_server.py                             │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ 本地调用
-┌─────────────────────▼───────────────────────────────────────┐
-│                 AI聊天代理 (ChatAgent)                        │
-│                  chat_agent.py                              │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ MCP协议
-┌─────────────────────▼───────────────────────────────────────┐
-│                MCP服务器 (MCPServer)                         │
-│                 run_server.py                               │
-│                 localhost:8004                              │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ 服务调用
-┌─────────────────────▼───────────────────────────────────────┐
-│                    运维服务层                                │
-│  ┌─────────────┬─────────────┬─────────────┬─────────────┐   │
-│  │ 硬件巡检服务  │ 基础监控服务  │ 通知推送服务  │ 智能分析服务  │   │
-│  │ (001-005)   │ (006-010)   │ (012-015)   │  AI引擎     │   │
-│  └─────────────┴─────────────┴─────────────┴─────────────┘   │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ 数据存储
-┌─────────────────────▼───────────────────────────────────────┐
-│              数据存储层 (MySQL + JSON文件)                    │
-│  ┌─────────────────┬─────────────────┬─────────────────────┐ │
-│  │   MySQL数据库    │   JSON文件缓存   │    企业微信API       │ │
-│  │ 192.168.101.62  │ services/data/  │  qyapi.weixin.qq.com│ │
-│  └─────────────────┴─────────────────┴─────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+
 技术栈
 后端框架
 
@@ -86,11 +51,8 @@ SSH (服务器连接)
 生成系统巡检报告
 核心代码:
 
-python
+```python```
 
-运行
-
-复制
 def query_abnormal_servers(self, memory_threshold=70, disk_threshold=80):
     # 查询内存异常服务器
     memory_query = """
@@ -138,11 +100,7 @@ QWEN3-32B大模型智能分析
 提供优化方案和风险评估
 AI提示词示例:
 
-python
-
-运行
-
-复制
+```python```
 prompt = f"""
 请基于以下硬件巡检数据，提供针对每台服务器IP的详细硬件采购建议：
 1. 巡检状态分析
@@ -237,11 +195,8 @@ AI智能分析趋势变化
 消息记录和状态跟踪
 企业微信配置:
 
-python
+```python```
 
-运行
-
-复制
 CORP_ID = "ww568874482f006b53"
 CORP_SECRET = "zJM1d6Ljk86fiK4WUptdi4gmA7Gj0RkaHDYiFW6wM8g"
 AGENT_ID = "1000008"
@@ -275,9 +230,10 @@ AGENT_ID = "1000008"
 数据库设计
 主要数据表
 服务器性能监控表
-sql
 
-复制
+```sql```
+
+
 CREATE TABLE `howso_server_performance_metrics` (
     `id` varchar(20) NOT NULL COMMENT '主键ID',
     `ip` varchar(50) NOT NULL COMMENT '服务器IP',
@@ -296,9 +252,10 @@ CREATE TABLE `howso_server_performance_metrics` (
     KEY `idx_collect_time` (`collect_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 服务监控表
-sql
 
-复制
+```sql```
+
+
 CREATE TABLE plat_service_monitoring (
     id varchar(20) NOT NULL,
     batch_id varchar(50) NOT NULL,
@@ -341,11 +298,8 @@ CREATE TABLE operation_analysis_summary (
 数据库配置
 文件: utils/database.py
 
-python
+```python```
 
-运行
-
-复制
 DATABASE_CONFIG = {
     'host': '192.168.101.62',
     'port': 3306,
@@ -357,22 +311,18 @@ DATABASE_CONFIG = {
 AI模型配置
 文件: config/config.py
 
-python
+```python```
 
-运行
 
-复制
 LLM_CONFIG = {
     'base_url': 'http://192.168.101.214:6007',
     'chat_endpoint': '/v1/chat/completions',
     'model_name': 'Qwen3-32B-AWQ'
 }
 SSH连接配置
-python
 
-运行
+```python```
 
-复制
 SSH_CONFIGS = {
     '192.168.10.152': {'username': 'root', 'password': 'howso@123'},
     '192.168.101.222': {'username': 'root', 'password': 'zxx@123howso?'},
@@ -400,18 +350,15 @@ pip install pycryptodome
 克隆项目
 bash
 
-复制
 git clone <repository-url>
 cd smart-ops-monitoring
 安装依赖
 bash
 
-复制
 pip install -r requirements.txt
 配置数据库
 bash
 
-复制
 # 创建数据库
 mysql -u root -p
 CREATE DATABASE envom CHARACTER SET utf8mb4;
@@ -421,7 +368,6 @@ mysql -u root -p envom < database/schema.sql
 配置文件
 bash
 
-复制
 # 复制配置模板
 cp config/config.py.example config/config.py
 
@@ -432,7 +378,6 @@ vi config/config.py
 
 bash
 
-复制
 # 启动MCP服务器
 python run_server.py
 
@@ -445,7 +390,6 @@ python chat_agent.py
 
 bash
 
-复制
 # 启动Web控制台
 python web_server.py
 
@@ -477,7 +421,6 @@ python
 
 运行
 
-复制
 import asyncio
 from services.system_inspection_service import system_inspection
 
@@ -488,11 +431,8 @@ result = system_inspection({
 print(result)
 执行完整巡检流程
 
-python
+```python```
 
-运行
-
-复制
 import asyncio
 from services.full_inspection import full_inspection
 from run_server import MCPServer
@@ -509,11 +449,8 @@ asyncio.run(main())
 企业微信集成使用
 发送通知消息
 
-python
+```python```
 
-运行
-
-复制
 from services.wechat.send_chat import wechat_notification_service
 
 result = wechat_notification_service({
@@ -522,11 +459,8 @@ result = wechat_notification_service({
 })
 检查内存申请
 
-python
+```python```
 
-运行
-
-复制
 from services.wechat.apply_notice import memory_apply_notification
 
 result = memory_apply_notification()
@@ -537,7 +471,6 @@ MCP协议接口
 
 json
 
-复制
 {
     "method": "list_tools",
     "id": "request_1"
@@ -546,7 +479,6 @@ json
 
 json
 
-复制
 {
     "method": "call_tool",
     "params": {
@@ -563,13 +495,11 @@ Web API接口
 
 http
 
-复制
 GET /api/service/status
 执行聊天对话
 
 http
 
-复制
 POST /api/chat
 Content-Type: application/json
 
@@ -580,7 +510,6 @@ Content-Type: application/json
 
 http
 
-复制
 GET /api/ai-report
 监控告警
 告警阈值配置
@@ -588,7 +517,6 @@ python
 
 运行
 
-复制
 THRESHOLDS = {
     'cpu': 70.0,        # CPU使用率阈值
     'memory': 70.0,     # 内存使用率阈值
@@ -657,11 +585,10 @@ grep "ERROR" logs/*.log
 开发指南
 添加新服务
 创建服务文件
-python
 
-运行
+```python```
 
-复制
+
 # services/new_service.py
 def new_service(params=None):
     try:
@@ -677,11 +604,10 @@ def new_service(params=None):
             "error": str(e)
         }
 注册服务
+
 python
 
-运行
 
-复制
 # run_server.py
 def _initialize_handlers(self):
     service_handlers = {
@@ -715,11 +641,9 @@ python
 函数名：function_name
 日志规范
 
-python
+```python```
 
-运行
 
-复制
 import logging
 logger = logging.getLogger(__name__)
 
@@ -745,7 +669,6 @@ except Exception as e:
 
 sql
 
-复制
 -- 性能监控表索引
 CREATE INDEX idx_ip_collect_time ON howso_server_performance_metrics(ip, collect_time);
 CREATE INDEX idx_memory_usage ON howso_server_performance_metrics(memory_usage);
