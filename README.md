@@ -6,6 +6,9 @@
 ![image](https://github.com/user-attachments/assets/7db729e7-0540-44b8-8ef1-eaa9ff217929)
 ![image](https://github.com/user-attachments/assets/a88060f3-4624-4126-bdd3-ade0fdea4a93)
 
+demo:
+https://github.com/aitachi/envom/blob/master/memory_update.mp4
+
 ![image](https://github.com/user-attachments/assets/7ac0ccc5-b549-42ec-8a20-0910b4923413)
 ![image](https://github.com/user-attachments/assets/e8dfe9e7-97f2-4ab6-880f-1b2c801f98c9)
 
