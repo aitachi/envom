@@ -1,4 +1,4 @@
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=_bYHp92dp4Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![视频演示](https://img.youtube.com/vi/_bYHp92dp4Y/maxresdefault.jpg)](https://www.youtube.com/watch?v=_bYHp92dp4Y)
 ![image](https://github.com/user-attachments/assets/5e206e78-85a3-49db-806e-5840ab1aa272)
 ![image](https://github.com/user-attachments/assets/970d2f20-0a9f-4abe-bde9-9b36b1ca7313)
 
